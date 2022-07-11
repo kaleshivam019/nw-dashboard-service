@@ -1,7 +1,9 @@
 package com.ey.nwdashboard.utils;
 
 import com.ey.nwdashboard.entity.UserEntity;
+import com.ey.nwdashboard.entity.VacationEntity;
 import com.ey.nwdashboard.model.UserModel;
+import com.ey.nwdashboard.model.VacationModel;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -49,5 +51,29 @@ public class DashboardUtils {
             userEntity.setUserCreatedOn(new Timestamp(System.currentTimeMillis()));
         }
         return userEntity;
+    }
+
+    /**
+     * Utility method to convert vacation entity to model
+     * @param vacationEntityList
+     * @return
+     */
+    public static List<VacationModel> convertVacationEntityToModel(List<VacationEntity> vacationEntityList) {
+        List<VacationModel> vacationModelList = new ArrayList<>();
+        vacationEntityList.stream().forEachOrdered(vacationEntity -> {
+            VacationModel vacationModel = new VacationModel();
+
+            vacationModel.setVacationDate(vacationEntity.getVacationDate().toString());
+            vacationModel.setVacationPlanned(vacationEntity.isVacationPlanned());
+            vacationModel.setVacationFullDay(vacationEntity.isVacationFullDay());
+            vacationModel.setPublicHoliday(vacationEntity.isPublicHoliday());
+
+            vacationModelList.add(vacationModel);
+        });
+        if(null != vacationModelList && !vacationModelList.isEmpty()){
+            return vacationModelList;
+        }else{
+            return null;
+        }
     }
 }
