@@ -22,4 +22,13 @@ public class VacationDBServiceImpl implements VacationDBService {
         }
         return null;
     }
+
+    @Override
+    public VacationEntity insertOrUpdateVacation(VacationEntity vacationEntity) {
+        VacationEntity vacation = vacationRepository.save(vacationEntity);
+        if(null != vacation){
+            return vacation;
+        }
+        return null;
+    }
 }

@@ -19,11 +19,11 @@ public class VacationEntity {
     private String vacationUserGPN;
 
     @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "mm/DD/yyyy")
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Column(name = "date")
     private Date vacationDate;
 
-    @Column(name = "vacation_type")
+    @Column(name = "planned_leave")
     private boolean isVacationPlanned;
 
     @Column(name = "full_day")
@@ -33,16 +33,16 @@ public class VacationEntity {
     private boolean isPublicHoliday;
 
     @Column(name = "created_by")
-    private String userCreatedBy;
+    private String vacationCreatedBy;
 
     @Column(name = "created_on")
-    private Timestamp userCreatedOn;
+    private Timestamp vacationCreatedOn;
 
     @Column(name = "updated_by")
-    private String userUpdatedBy;
+    private String vacationUpdatedBy;
 
     @Column(name = "updated_on")
-    private Timestamp userUpdatedOn;
+    private Timestamp vacationUpdatedOn;
 
     public Long getVacationId() {
         return vacationId;
@@ -92,35 +92,35 @@ public class VacationEntity {
         isPublicHoliday = publicHoliday;
     }
 
-    public String getUserCreatedBy() {
-        return userCreatedBy;
+    public String getVacationCreatedBy() {
+        return vacationCreatedBy;
     }
 
-    public void setUserCreatedBy(String userCreatedBy) {
-        this.userCreatedBy = userCreatedBy;
+    public void setVacationCreatedBy(String vacationCreatedBy) {
+        this.vacationCreatedBy = vacationCreatedBy;
     }
 
-    public Timestamp getUserCreatedOn() {
-        return userCreatedOn;
+    public Timestamp getVacationCreatedOn() {
+        return vacationCreatedOn;
     }
 
-    public void setUserCreatedOn(Timestamp userCreatedOn) {
-        this.userCreatedOn = userCreatedOn;
+    public void setVacationCreatedOn(Timestamp vacationCreatedOn) {
+        this.vacationCreatedOn = vacationCreatedOn;
     }
 
-    public String getUserUpdatedBy() {
-        return userUpdatedBy;
+    public String getVacationUpdatedBy() {
+        return vacationUpdatedBy;
     }
 
-    public void setUserUpdatedBy(String userUpdatedBy) {
-        this.userUpdatedBy = userUpdatedBy;
+    public void setVacationUpdatedBy(String vacationUpdatedBy) {
+        this.vacationUpdatedBy = vacationUpdatedBy;
     }
 
-    public Timestamp getUserUpdatedOn() {
-        return userUpdatedOn;
+    public Timestamp getVacationUpdatedOn() {
+        return vacationUpdatedOn;
     }
 
-    public void setUserUpdatedOn(Timestamp userUpdatedOn) {
-        this.userUpdatedOn = userUpdatedOn;
+    public void setVacationUpdatedOn(Timestamp vacationUpdatedOn) {
+        this.vacationUpdatedOn = vacationUpdatedOn;
     }
 }

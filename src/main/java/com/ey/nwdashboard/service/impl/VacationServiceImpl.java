@@ -2,15 +2,23 @@ package com.ey.nwdashboard.service.impl;
 
 import com.ey.nwdashboard.entity.VacationEntity;
 import com.ey.nwdashboard.model.VacationModel;
+import com.ey.nwdashboard.model.VacationRequest;
 import com.ey.nwdashboard.model.VacationResponse;
 import com.ey.nwdashboard.service.UserDBService;
 import com.ey.nwdashboard.service.VacationDBService;
 import com.ey.nwdashboard.service.VacationService;
 import com.ey.nwdashboard.utils.DashboardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class VacationServiceImpl implements VacationService {
@@ -41,5 +49,80 @@ public class VacationServiceImpl implements VacationService {
             }
         }
         return vacationResponse;
+    }
+
+    /**
+     * This method will save the vacations of the user
+     * @param vacationRequest
+     * @return
+     */
+    @Override
+    public ResponseEntity saveUserVacations(VacationRequest vacationRequest) {
+        if(null != vacationRequest &&
+                null != vacationRequest.getUserGPN() &&
+                userDBService.isExistingUser(vacationRequest.getUserGPN()) &&
+                (null != vacationRequest.getVacations() && !vacationRequest.getVacations().isEmpty())){
+            String userGPN = vacationRequest.getUserGPN();
+            List<VacationModel> newVacations = vacationRequest.getVacations();
+            List<VacationEntity> existingVacations = vacationDBService.getVacations(userGPN);
+
+            AtomicInteger createUpdateCounter = new AtomicInteger();
+
+            newVacations.stream().forEach(vacationModel -> {
+                String vacationDate = vacationModel.getVacationDate();
+                boolean isVacationPlanned = vacationModel.isVacationPlanned();
+                boolean isVacationFullDay = vacationModel.isVacationFullDay();
+                boolean isPublicHoliday = vacationModel.isPublicHoliday();
+
+                VacationEntity existingVacation = null;
+                if(null != existingVacations){
+                    existingVacation = existingVacations.stream().filter(vacationEntity -> vacationEntity.getVacationDate().toString().equals(vacationDate)).findFirst().orElse(null);
+                }
+
+                if(null != existingVacation){
+                    //Vacation is already present so update operation is required
+
+                    existingVacation.setVacationFullDay(isVacationFullDay);
+                    existingVacation.setVacationPlanned(isVacationPlanned);
+                    existingVacation.setPublicHoliday(isPublicHoliday);
+                    existingVacation.setVacationCreatedBy(userGPN);
+                    existingVacation.setVacationUpdatedBy(userGPN);
+                    existingVacation.setVacationUpdatedOn(new Timestamp(System.currentTimeMillis()));
+
+                    vacationDBService.insertOrUpdateVacation(existingVacation);
+                    createUpdateCounter.getAndIncrement();
+                }else{
+                    //Vacation is not present so insert operation is required
+                    VacationEntity vacationEntity = new VacationEntity();
+
+                    //Formatting date from String to Date type
+                    Date vacationDateFormatted = new Date();
+                    try{
+                        vacationDateFormatted = new SimpleDateFormat("yyyy-MM-dd").parse(vacationDate);
+                    }catch (ParseException e){
+                        e.printStackTrace();
+                    }
+
+                    vacationEntity.setVacationDate(vacationDateFormatted);
+                    vacationEntity.setVacationPlanned(isVacationPlanned);
+                    vacationEntity.setVacationFullDay(isVacationFullDay);
+                    vacationEntity.setPublicHoliday(isPublicHoliday);
+                    vacationEntity.setVacationUserGPN(userGPN);
+                    vacationEntity.setVacationCreatedBy(userGPN);
+                    vacationEntity.setVacationCreatedOn(new Timestamp(System.currentTimeMillis()));
+
+                    vacationDBService.insertOrUpdateVacation(vacationEntity);
+                    createUpdateCounter.getAndIncrement();
+                }
+            });
+
+            if(createUpdateCounter.get() == 0){
+                return ResponseEntity.ok("No vacations to be updated");
+            }else{
+                return ResponseEntity.ok(createUpdateCounter.get() + " Vacations successfully created or updated");
+            }
+
+        }
+        return null;
     }
 }

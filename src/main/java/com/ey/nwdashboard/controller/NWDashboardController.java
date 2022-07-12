@@ -2,6 +2,7 @@ package com.ey.nwdashboard.controller;
 
 import com.ey.nwdashboard.model.UserModel;
 import com.ey.nwdashboard.model.UserResponse;
+import com.ey.nwdashboard.model.VacationRequest;
 import com.ey.nwdashboard.model.VacationResponse;
 import com.ey.nwdashboard.service.UserService;
 import com.ey.nwdashboard.service.VacationService;
@@ -31,5 +32,11 @@ public class NWDashboardController {
     @GetMapping(value = "dashboard/v1/{user-gpn}/vacations", produces = "application/json")
     public VacationResponse getUserVacations(@PathVariable("user-gpn") String userGPN){
         return vacationService.getUserVacations(userGPN);
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "dashboard/v1/add/vacations", consumes = "application/json", produces = "application/json")
+    public ResponseEntity saveUserVacations(@RequestBody VacationRequest vacationRequest){
+        return vacationService.saveUserVacations(vacationRequest);
     }
 }

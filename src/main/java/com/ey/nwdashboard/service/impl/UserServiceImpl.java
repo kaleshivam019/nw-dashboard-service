@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
             UserEntity userEntity = DashboardUtils.convertModelToEntity(userModel);
             if (null != userEntity){
                 UserEntity createdUserEntity = userDBService.addNewUser(userEntity);
-                if(null != userEntity) {
+                if(null != createdUserEntity) {
                     return ResponseEntity.ok("User Created");
                 }
             }
