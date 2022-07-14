@@ -1,5 +1,6 @@
 package com.ey.nwdashboard.utils;
 
+import com.ey.nwdashboard.entity.TrackerEntity;
 import com.ey.nwdashboard.entity.UserEntity;
 import com.ey.nwdashboard.entity.VacationEntity;
 import com.ey.nwdashboard.model.UserModel;
@@ -10,26 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardUtils {
-    public static List<UserModel> convertEntityToModel(List<UserEntity> userEntityList) {
-        List<UserModel> userModelList = new ArrayList<>();
+    public static UserModel convertEntityToModel(UserEntity userEntity, TrackerEntity trackerEntity) {
+        UserModel userModel = new UserModel();
+        if(null != userEntity && null != trackerEntity){
+            userModel.setUserGPN(userEntity.getUserGPN());
+            userModel.setUserName(userEntity.getUserName());
+            userModel.setUserEmail(userEntity.getUserEmail());
+            userModel.setUserProjectName(userEntity.getUserProjectName());
+            userModel.setUserActive(userEntity.isUserActive());
+            userModel.setUserCreatedBy(userEntity.getUserCreatedBy());
+            userModel.setUserCreatedOn(userEntity.getUserCreatedOn());
+            userModel.setUserUpdatedBy(userEntity.getUserUpdatedBy());
+            userModel.setUserUpdatedOn(userEntity.getUserUpdatedOn());
+            userModel.setVacation(trackerEntity.isVacation());
+            userModel.setAllowance(trackerEntity.isAllowance());
+            userModel.setShift(trackerEntity.isShift());
 
-        if (null != userEntityList && !userEntityList.isEmpty()){
-            userEntityList.stream().forEach(userEntity -> {
-                UserModel userModel = new UserModel();
-
-                userModel.setUserGPN(userEntity.getUserGPN());
-                userModel.setUserName(userEntity.getUserName());
-                userModel.setUserEmail(userEntity.getUserEmail());
-                userModel.setUserProjectName(userEntity.getUserProjectName());
-                userModel.setUserActive(userEntity.isUserActive());
-                userModel.setUserCreatedBy(userEntity.getUserCreatedBy());
-                userModel.setUserCreatedOn(userEntity.getUserCreatedOn());
-                userModel.setUserUpdatedBy(userEntity.getUserUpdatedBy());
-                userModel.setUserUpdatedOn(userEntity.getUserUpdatedOn());
-
-                userModelList.add(userModel);
-            });
-            return userModelList;
+            return userModel;
         }
         return null;
     }
@@ -49,6 +47,8 @@ public class DashboardUtils {
             userEntity.setUserActive(userModel.isUserActive());
             userEntity.setUserCreatedBy("SYS-ADMIN");
             userEntity.setUserCreatedOn(new Timestamp(System.currentTimeMillis()));
+            userEntity.setUserUpdatedBy("SYS-ADMIN");
+            userEntity.setUserUpdatedOn(new Timestamp(System.currentTimeMillis()));
         }
         return userEntity;
     }
