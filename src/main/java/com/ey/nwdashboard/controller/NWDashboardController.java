@@ -19,25 +19,25 @@ public class NWDashboardController {
     @Autowired
     VacationService vacationService;
 
-    @CrossOrigin(origins = {"http://localhost:3000"})
+    @CrossOrigin
     @GetMapping(value = "dashboard/v1/users", produces = "application/json")
     public UserResponse getUsersOnLoad(){
         return userService.getUsersOnLoad();
     }
 
-    @CrossOrigin(origins = {"http://localhost:3000"})
+    @CrossOrigin
     @PostMapping(value = "dashboard/v1/add/user", consumes = "application/json", produces = "application/json")
     public ResponseEntity addNewUser(@RequestBody UserModel userModel){
         return userService.addNewUser(userModel);
     }
 
-    @CrossOrigin(origins = {"http://localhost:3000"})
+    @CrossOrigin
     @GetMapping(value = "dashboard/v1/{user-gpn}/vacations", produces = "application/json")
     public VacationResponse getUserVacations(@PathVariable("user-gpn") String userGPN){
         return vacationService.getUserVacations(userGPN);
     }
 
-    @CrossOrigin(origins = {"http://localhost:3000"})
+    @CrossOrigin
     @PostMapping(value = "dashboard/v1/add/vacations", consumes = "application/json", produces = "application/json")
     public ResponseEntity saveUserVacations(@RequestBody VacationRequest vacationRequest){
         return vacationService.saveUserVacations(vacationRequest);
