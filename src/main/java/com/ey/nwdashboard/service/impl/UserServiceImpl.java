@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -48,6 +50,8 @@ public class UserServiceImpl implements UserService {
         if(null != userModel.getUserGPN() &&
                 !userDBService.isExistingUser(userModel.getUserGPN())){
             UserEntity userEntity = DashboardUtils.convertModelToEntity(userModel);
+            userEntity.setUserCreatedOn(new Timestamp((new Date()).getTime()));
+            userEntity.setUserUpdatedOn(new Timestamp((new Date()).getTime()));
             if (null != userEntity){
                 UserEntity createdUserEntity = userDBService.addNewUser(userEntity);
                 if(null != createdUserEntity) {
