@@ -13,6 +13,9 @@ public class UserModel {
     private Timestamp userCreatedOn;
     private String userUpdatedBy;
     private Timestamp userUpdatedOn;
+    private boolean vacation;
+    private boolean allowance;
+    private boolean shift;
 
     public String getUserGPN() {
         return userGPN;
@@ -84,5 +87,29 @@ public class UserModel {
 
     public void setUserUpdatedOn(Timestamp userUpdatedOn) {
         this.userUpdatedOn = userUpdatedOn;
+    }
+
+    public boolean isVacation() {
+        return vacation;
+    }
+
+    public void setVacation(boolean vacation) {
+        this.vacation = vacation;
+    }
+
+    public boolean isAllowance() {
+        return allowance;
+    }
+
+    public void setAllowance(boolean allowance) {
+        this.allowance = allowance;
+    }
+
+    public boolean isShift() {
+        return shift;
+    }
+
+    public void setShift(boolean shift) {
+        this.shift = shift;
     }
 }

@@ -1,7 +1,7 @@
 package com.ey.nwdashboard.controller;
 
+import com.ey.nwdashboard.model.OnLoadResponse;
 import com.ey.nwdashboard.model.UserModel;
-import com.ey.nwdashboard.model.UserResponse;
 import com.ey.nwdashboard.model.VacationRequest;
 import com.ey.nwdashboard.model.VacationResponse;
 import com.ey.nwdashboard.service.UserService;
@@ -20,9 +20,9 @@ public class NWDashboardController {
     VacationService vacationService;
 
     @CrossOrigin
-    @GetMapping(value = "dashboard/v1/users", produces = "application/json")
-    public UserResponse getUsersOnLoad(){
-        return userService.getUsersOnLoad();
+    @GetMapping(value = "dashboard/v1/load", produces = "application/json")
+    public OnLoadResponse getOnLoadData(){
+        return userService.getOnLoadData();
     }
 
     @CrossOrigin
