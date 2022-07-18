@@ -1,24 +1,24 @@
 package com.ey.nwdashboard.service.impl;
 
+import com.ey.nwdashboard.entity.PublicHolidayEntity;
 import com.ey.nwdashboard.entity.TrackerEntity;
 import com.ey.nwdashboard.entity.VacationEntity;
-import com.ey.nwdashboard.model.VacationModel;
-import com.ey.nwdashboard.model.VacationRequest;
-import com.ey.nwdashboard.model.VacationResponse;
+import com.ey.nwdashboard.model.*;
 import com.ey.nwdashboard.service.TrackerDBService;
 import com.ey.nwdashboard.service.UserDBService;
 import com.ey.nwdashboard.service.VacationDBService;
 import com.ey.nwdashboard.service.VacationService;
 import com.ey.nwdashboard.utils.DashboardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -151,5 +151,58 @@ public class VacationServiceImpl implements VacationService {
 
         }
         return null;
+    }
+
+    @Override
+    public ResponseEntity savePublicHolidays(PublicHolidayRequest publicHolidayRequest) {
+        if(null != publicHolidayRequest &&
+                null != publicHolidayRequest.getPublicHolidays() &&
+                !publicHolidayRequest.getPublicHolidays().isEmpty()){
+
+            AtomicInteger insertUpdateCount = new AtomicInteger();
+
+            publicHolidayRequest.getPublicHolidays().stream().forEach(publicHolidayModel -> {
+                //convert date to local date for each holiday
+                LocalDate holidayDate = LocalDate.parse(publicHolidayModel.getDate());
+
+                //Check if holiday already present in db
+                List<PublicHolidayEntity> existingPublicHolidayList = vacationDBService.getPublicHolidays(holidayDate);
+
+                if(null != existingPublicHolidayList){
+                    //add existing stored location for public holiday in set
+                    Set<String> exitingLocations = new HashSet<>();
+                    existingPublicHolidayList.forEach(publicHolidayEntity -> exitingLocations.add(publicHolidayEntity.getLocation()));
+
+                    if(!exitingLocations.contains(publicHolidayModel.getLocation())){
+                        PublicHolidayEntity newPublicHoliday = new PublicHolidayEntity();
+                        newPublicHoliday.setPublicHolidayDate(holidayDate);
+                        newPublicHoliday.setLocation(publicHolidayModel.getLocation());
+                        newPublicHoliday.setPublicHolidayCreatedBy("SYS-ADMIN");
+                        newPublicHoliday.setPublicHolidayCreatedOn(new Timestamp(System.currentTimeMillis()));
+                        newPublicHoliday.setPublicHolidayUpdatedBy("SYS-ADMIN");
+                        newPublicHoliday.setPublicHolidayUpdatedOn(new Timestamp(System.currentTimeMillis()));
+
+                        insertUpdateCount.getAndIncrement();
+                        vacationDBService.insertOrUpdatePublicHoliday(newPublicHoliday);
+                    }
+                }
+            });
+            if(insertUpdateCount.get() !=0 ){
+                MessageModelResponse messageModelResponse = new MessageModelResponse();
+                messageModelResponse.setMessage(insertUpdateCount.get() + " Public holidays inserted or updated");
+
+                return new ResponseEntity<>(messageModelResponse, HttpStatus.OK);
+            }else{
+                MessageModelResponse messageModelResponse = new MessageModelResponse();
+                messageModelResponse.setMessage("No public holiday to be inserted or updated");
+
+                return new ResponseEntity<>(messageModelResponse, HttpStatus.OK);
+            }
+        }else{
+            MessageModelResponse messageModelResponse = new MessageModelResponse();
+            messageModelResponse.setMessage("Please pass atleast one public holiday");
+
+            return new ResponseEntity<>(messageModelResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 }
