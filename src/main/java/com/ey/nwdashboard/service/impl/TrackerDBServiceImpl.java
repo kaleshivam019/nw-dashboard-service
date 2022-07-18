@@ -22,4 +22,16 @@ public class TrackerDBServiceImpl implements TrackerDBService {
         }
         return null;
     }
+
+    @Override
+    public TrackerEntity saveTrackerEntry(TrackerEntity trackerEntity) {
+        if(null != trackerEntity){
+            trackerEntity = trackerRepository.save(trackerEntity);
+
+            if(null != trackerEntity){
+                return trackerEntity;
+            }
+        }
+        return null;
+    }
 }

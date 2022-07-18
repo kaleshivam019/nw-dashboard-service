@@ -4,4 +4,5 @@ import com.ey.nwdashboard.entity.TrackerEntity;
 
 public interface TrackerDBService {
     TrackerEntity getTrackerEntry(String trackerGPN);
+    TrackerEntity saveTrackerEntry(TrackerEntity trackerEntity);
 }

@@ -13,7 +13,7 @@ import java.util.List;
 public class DashboardUtils {
     public static UserModel convertEntityToModel(UserEntity userEntity, TrackerEntity trackerEntity) {
         UserModel userModel = new UserModel();
-        if(null != userEntity && null != trackerEntity){
+        if(null != userEntity){
             userModel.setUserGPN(userEntity.getUserGPN());
             userModel.setUserName(userEntity.getUserName());
             userModel.setUserEmail(userEntity.getUserEmail());
@@ -24,10 +24,11 @@ public class DashboardUtils {
             userModel.setUserCreatedOn(userEntity.getUserCreatedOn());
             userModel.setUserUpdatedBy(userEntity.getUserUpdatedBy());
             userModel.setUserUpdatedOn(userEntity.getUserUpdatedOn());
-            userModel.setVacation(trackerEntity.isVacation());
-            userModel.setAllowance(trackerEntity.isAllowance());
-            userModel.setShift(trackerEntity.isShift());
-
+            if(null != trackerEntity){
+                userModel.setVacation(trackerEntity.isVacation());
+                userModel.setAllowance(trackerEntity.isAllowance());
+                userModel.setShift(trackerEntity.isShift());
+            }
             return userModel;
         }
         return null;
