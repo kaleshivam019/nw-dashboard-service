@@ -19,6 +19,7 @@ public class DashboardUtils {
             userModel.setUserEmail(userEntity.getUserEmail());
             userModel.setUserProjectName(userEntity.getUserProjectName());
             userModel.setUserActive(userEntity.isUserActive());
+            userModel.setUserLocation(userEntity.getUserLocation());
             userModel.setUserCreatedBy(userEntity.getUserCreatedBy());
             userModel.setUserCreatedOn(userEntity.getUserCreatedOn());
             userModel.setUserUpdatedBy(userEntity.getUserUpdatedBy());
@@ -45,6 +46,7 @@ public class DashboardUtils {
             userEntity.setUserEmail(userModel.getUserEmail());
             userEntity.setUserProjectName(userModel.getUserProjectName());
             userEntity.setUserActive(userModel.isUserActive());
+            userEntity.setUserLocation(userModel.getUserLocation());
             userEntity.setUserCreatedBy("SYS-ADMIN");
             userEntity.setUserCreatedOn(new Timestamp(System.currentTimeMillis()));
             userEntity.setUserUpdatedBy("SYS-ADMIN");

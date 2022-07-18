@@ -84,7 +84,6 @@ public class VacationServiceImpl implements VacationService {
                     existingVacation.setVacationFullDay(isVacationFullDay);
                     existingVacation.setVacationPlanned(isVacationPlanned);
                     existingVacation.setPublicHoliday(isPublicHoliday);
-                    existingVacation.setVacationCreatedBy(userGPN);
                     existingVacation.setVacationUpdatedBy(userGPN);
                     existingVacation.setVacationUpdatedOn(new Timestamp(System.currentTimeMillis()));
 
@@ -109,6 +108,8 @@ public class VacationServiceImpl implements VacationService {
                     vacationEntity.setVacationUserGPN(userGPN);
                     vacationEntity.setVacationCreatedBy(userGPN);
                     vacationEntity.setVacationCreatedOn(new Timestamp(System.currentTimeMillis()));
+                    vacationEntity.setVacationUpdatedBy(userGPN);
+                    vacationEntity.setVacationUpdatedOn(new Timestamp(System.currentTimeMillis()));
 
                     vacationDBService.insertOrUpdateVacation(vacationEntity);
                     createUpdateCounter.getAndIncrement();

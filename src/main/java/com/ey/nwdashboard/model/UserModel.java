@@ -16,6 +16,7 @@ public class UserModel {
     private boolean vacation;
     private boolean allowance;
     private boolean shift;
+    private String userLocation;
 
     public String getUserGPN() {
         return userGPN;
@@ -111,5 +112,13 @@ public class UserModel {
 
     public void setShift(boolean shift) {
         this.shift = shift;
+    }
+
+    public String getUserLocation() {
+        return userLocation;
+    }
+
+    public void setUserLocation(String userLocation) {
+        this.userLocation = userLocation;
     }
 }

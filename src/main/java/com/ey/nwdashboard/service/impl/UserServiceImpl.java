@@ -77,8 +77,7 @@ public class UserServiceImpl implements UserService {
                     currentDayVacationModel.setName(userEntity.getUserName());
                     currentDayVacationModel.setEmail(userEntity.getUserEmail());
                     currentDayVacationModel.setTeam(userEntity.getUserProjectName());
-                    //TODO: need to set location of user
-                    currentDayVacationModel.setLocation("");
+                    currentDayVacationModel.setLocation(userEntity.getUserLocation());
                     currentDayVacationModel.setPublicHoliday(currentDayVacationEntity.isPublicHoliday());
                     currentDayVacationModel.setVacationPlanned(currentDayVacationEntity.isVacationPlanned());
                     currentDayVacationModel.setVacationFullDay(currentDayVacationEntity.isVacationFullDay());

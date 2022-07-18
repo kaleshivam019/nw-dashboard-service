@@ -38,6 +38,9 @@ public class UserEntity {
     @Column(name = "updated_on")
     private Timestamp userUpdatedOn;
 
+    @Column(name = "location")
+    private String userLocation;
+
     public String getUserGPN() {
         return userGPN;
     }
@@ -108,5 +111,13 @@ public class UserEntity {
 
     public void setUserUpdatedOn(Timestamp userUpdatedOn) {
         this.userUpdatedOn = userUpdatedOn;
+    }
+
+    public String getUserLocation() {
+        return userLocation;
+    }
+
+    public void setUserLocation(String userLocation) {
+        this.userLocation = userLocation;
     }
 }
