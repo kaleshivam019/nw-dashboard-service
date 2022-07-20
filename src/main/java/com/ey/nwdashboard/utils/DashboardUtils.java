@@ -79,4 +79,19 @@ public class DashboardUtils {
             return null;
         }
     }
+
+    /**
+     * This method will check if update operation to vacation is required or not
+     * @param existingVacation
+     * @param vacationModel
+     * @return Boolean
+     */
+    public static boolean isVacationUpdateRequired(VacationEntity existingVacation, VacationModel vacationModel) {
+        if((existingVacation.isPublicHoliday() != vacationModel.isPublicHoliday()) ||
+                (existingVacation.isVacationFullDay() != vacationModel.isVacationFullDay()) ||
+                    (existingVacation.isVacationPlanned() != vacationModel.isVacationPlanned())){
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
 }

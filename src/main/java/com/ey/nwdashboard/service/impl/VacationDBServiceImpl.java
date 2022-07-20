@@ -59,4 +59,11 @@ public class VacationDBServiceImpl implements VacationDBService {
         }
         return null;
     }
+
+    @Override
+    public void deleteVacations(List<VacationEntity> existingVacations) {
+        if(null != existingVacations && !existingVacations.isEmpty()){
+            vacationRepository.deleteAll(existingVacations);
+        }
+    }
 }

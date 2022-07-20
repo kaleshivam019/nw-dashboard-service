@@ -86,14 +86,19 @@ public class VacationServiceImpl implements VacationService {
                 if(null != existingVacation){
                     //Vacation is already present so update operation is required
 
-                    existingVacation.setVacationFullDay(isVacationFullDay);
-                    existingVacation.setVacationPlanned(isVacationPlanned);
-                    existingVacation.setPublicHoliday(isPublicHoliday);
-                    existingVacation.setVacationUpdatedBy(userGPN);
-                    existingVacation.setVacationUpdatedOn(new Timestamp(System.currentTimeMillis()));
+                    if(DashboardUtils.isVacationUpdateRequired(existingVacation,vacationModel)){
+                        existingVacation.setVacationFullDay(isVacationFullDay);
+                        existingVacation.setVacationPlanned(isVacationPlanned);
+                        existingVacation.setPublicHoliday(isPublicHoliday);
+                        existingVacation.setVacationUpdatedBy(userGPN);
+                        existingVacation.setVacationUpdatedOn(new Timestamp(System.currentTimeMillis()));
 
-                    vacationDBService.insertOrUpdateVacation(existingVacation);
-                    createUpdateCounter.getAndIncrement();
+                        vacationDBService.insertOrUpdateVacation(existingVacation);
+                        createUpdateCounter.getAndIncrement();
+                    }
+
+                    //Remove existingVacation from existingVacations list after createOrUpdate is done
+                    existingVacations.remove(existingVacation);
                 }else{
                     //Vacation is not present so insert operation is required
                     VacationEntity vacationEntity = new VacationEntity();
@@ -151,10 +156,16 @@ public class VacationServiceImpl implements VacationService {
                 }
             });
 
-            if(createUpdateCounter.get() == 0){
+            //Delete vacations from DB which are not the part of request payload - START
+            if(null != existingVacations && !existingVacations.isEmpty()){
+                vacationDBService.deleteVacations(existingVacations);
+            }
+            //END
+
+            if(createUpdateCounter.get() == 0 && existingVacations.isEmpty()){
                 return ResponseEntity.ok("No vacations to be updated");
             }else{
-                return ResponseEntity.ok(createUpdateCounter.get() + " Vacations successfully created or updated");
+                return ResponseEntity.ok(createUpdateCounter.get() + " Vacations successfully created or updated & " + existingVacations.size() + " deleted.");
             }
 
         }

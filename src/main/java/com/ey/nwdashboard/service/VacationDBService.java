@@ -14,4 +14,6 @@ public interface VacationDBService {
     PublicHolidayEntity insertOrUpdatePublicHoliday(PublicHolidayEntity publicHolidayEntity);
 
     List<PublicHolidayEntity> getPublicHolidays(LocalDate date);
+
+    void deleteVacations(List<VacationEntity> existingVacations);
 }
