@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class VacationServiceImpl implements VacationService {
@@ -69,6 +70,8 @@ public class VacationServiceImpl implements VacationService {
             String userGPN = vacationRequest.getUserGPN();
             List<VacationModel> newVacations = vacationRequest.getVacations();
             List<VacationEntity> existingVacations = vacationDBService.getVacations(userGPN);
+            //Get the tracker entry for GPN
+            AtomicReference<TrackerEntity> trackerEntry = new AtomicReference<>(trackerDBService.getTrackerEntry(userGPN));
 
             AtomicInteger createUpdateCounter = new AtomicInteger();
 
@@ -97,6 +100,9 @@ public class VacationServiceImpl implements VacationService {
                         createUpdateCounter.getAndIncrement();
                     }
 
+                    //Make tracker entry for each user
+                    trackerEntry.set(saveTrackerEntry(trackerEntry.get(), userGPN));
+
                     //Remove existingVacation from existingVacations list after createOrUpdate is done
                     existingVacations.remove(existingVacation);
                 }else{
@@ -121,35 +127,8 @@ public class VacationServiceImpl implements VacationService {
                     vacationEntity.setVacationUpdatedBy(userGPN);
                     vacationEntity.setVacationUpdatedOn(new Timestamp(System.currentTimeMillis()));
 
-                    //Make tracker entry for each user if not found in vacation tracker table - START
-
-                    //Get the tracker entry for GPN
-                    TrackerEntity trackerEntry = trackerDBService.getTrackerEntry(userGPN);
-
-                    //If tracker entry not found for user then insert a new one time entry
-                    if(null == trackerEntry){
-                        TrackerEntity newTrackerEntity = new TrackerEntity();
-                        newTrackerEntity.setTrackerUserGPN(userGPN);
-                        newTrackerEntity.setVacation(true);
-                        newTrackerEntity.setAllowance(false);
-                        newTrackerEntity.setShift(false);
-                        newTrackerEntity.setTrackerCreatedBy("SYS-ADMIN");
-                        newTrackerEntity.setTrackerCreatedOn(new Timestamp(System.currentTimeMillis()));
-                        newTrackerEntity.setTrackerUpdatedBy("SYS-ADMIN");
-                        newTrackerEntity.setTrackerUpdatedOn(new Timestamp(System.currentTimeMillis()));
-
-                        trackerDBService.saveTrackerEntry(newTrackerEntity);
-                    }else if(null != trackerEntry && !trackerEntry.isVacation()){ //If tracker entry is found but vacation flag is not true then set it true and update the entry
-                        //update the existing entry for the user
-
-                        trackerEntry.setVacation(true);
-                        trackerEntry.setTrackerUpdatedBy("SYS-ADMIN");
-                        trackerEntry.setTrackerUpdatedOn(new Timestamp(System.currentTimeMillis()));
-
-                        trackerDBService.saveTrackerEntry(trackerEntry);
-                    }
-
-                    //END
+                    //Make tracker entry for each user
+                    trackerEntry.set(saveTrackerEntry(trackerEntry.get(), userGPN));
 
                     vacationDBService.insertOrUpdateVacation(vacationEntity);
                     createUpdateCounter.getAndIncrement();
@@ -170,6 +149,37 @@ public class VacationServiceImpl implements VacationService {
 
         }
         return null;
+    }
+
+    /**
+     * This method is responsible to make a tracker entry if not found & if found check entry updated for vacation or not
+     * @param trackerEntry
+     * @param userGPN
+     */
+    private TrackerEntity saveTrackerEntry(TrackerEntity trackerEntry, String userGPN) {
+        //If tracker entry not found for user then insert a new one time entry
+        if(null == trackerEntry){
+            TrackerEntity newTrackerEntity = new TrackerEntity();
+            newTrackerEntity.setTrackerUserGPN(userGPN);
+            newTrackerEntity.setVacation(true);
+            newTrackerEntity.setAllowance(false);
+            newTrackerEntity.setShift(false);
+            newTrackerEntity.setTrackerCreatedBy("SYS-ADMIN");
+            newTrackerEntity.setTrackerCreatedOn(new Timestamp(System.currentTimeMillis()));
+            newTrackerEntity.setTrackerUpdatedBy("SYS-ADMIN");
+            newTrackerEntity.setTrackerUpdatedOn(new Timestamp(System.currentTimeMillis()));
+
+            return trackerDBService.saveTrackerEntry(newTrackerEntity);
+        }else if(null != trackerEntry && !trackerEntry.isVacation()){ //If tracker entry is found but vacation flag is not true then set it true and update the entry
+            //update the existing entry for the user
+
+            trackerEntry.setVacation(true);
+            trackerEntry.setTrackerUpdatedBy("SYS-ADMIN");
+            trackerEntry.setTrackerUpdatedOn(new Timestamp(System.currentTimeMillis()));
+
+            return trackerDBService.saveTrackerEntry(trackerEntry);
+        }
+        return trackerEntry;
     }
 
     @Override
