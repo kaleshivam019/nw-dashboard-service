@@ -134,6 +134,14 @@ public class VacationServiceImpl implements VacationService {
                         newTrackerEntity.setTrackerUpdatedOn(new Timestamp(System.currentTimeMillis()));
 
                         trackerDBService.saveTrackerEntry(newTrackerEntity);
+                    }else if(null != trackerEntry && !trackerEntry.isVacation()){ //If tracker entry is found but vacation flag is not true then set it true and update the entry
+                        //update the existing entry for the user
+
+                        trackerEntry.setVacation(true);
+                        trackerEntry.setTrackerUpdatedBy("SYS-ADMIN");
+                        trackerEntry.setTrackerUpdatedOn(new Timestamp(System.currentTimeMillis()));
+
+                        trackerDBService.saveTrackerEntry(trackerEntry);
                     }
 
                     //END
