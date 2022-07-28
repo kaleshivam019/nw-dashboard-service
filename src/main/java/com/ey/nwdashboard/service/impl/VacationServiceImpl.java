@@ -141,10 +141,10 @@ public class VacationServiceImpl implements VacationService {
             }
             //END
 
-            if(createUpdateCounter.get() == 0 && existingVacations.isEmpty()){
+            if(createUpdateCounter.get() == 0 && null != existingVacations && existingVacations.isEmpty()){
                 return ResponseEntity.ok("No vacations to be updated");
             }else{
-                return ResponseEntity.ok(createUpdateCounter.get() + " Vacations successfully created or updated & " + existingVacations.size() + " deleted.");
+                return ResponseEntity.ok(createUpdateCounter.get() + " Vacations successfully created or updated & " + (null !=existingVacations ? existingVacations.size() : 0) + " deleted.");
             }
 
         }

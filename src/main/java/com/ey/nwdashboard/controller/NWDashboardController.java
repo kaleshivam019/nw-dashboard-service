@@ -1,6 +1,7 @@
 package com.ey.nwdashboard.controller;
 
 import com.ey.nwdashboard.model.*;
+import com.ey.nwdashboard.service.FetchReportService;
 import com.ey.nwdashboard.service.UserService;
 import com.ey.nwdashboard.service.VacationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class NWDashboardController {
 
     @Autowired
     VacationService vacationService;
+
+    @Autowired
+    FetchReportService fetchReportService;
 
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/load", produces = "application/json")
@@ -44,5 +48,11 @@ public class NWDashboardController {
     @PostMapping(value = "dashboard/v1/add/public-holidays", consumes = "application/json", produces = "application/json")
     public ResponseEntity<MessageModelResponse> savePublicHolidays(@RequestBody PublicHolidayRequest publicHolidayRequest){
         return vacationService.savePublicHolidays(publicHolidayRequest);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "dashboard/v1/fetch-report", produces = "application/json")
+    public ResponseEntity<FetchReportResponse> fetchReport(){
+        return fetchReportService.fetchReport();
     }
 }
