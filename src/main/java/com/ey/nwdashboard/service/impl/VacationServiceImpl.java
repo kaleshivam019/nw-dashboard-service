@@ -109,13 +109,8 @@ public class VacationServiceImpl implements VacationService {
                     //Vacation is not present so insert operation is required
                     VacationEntity vacationEntity = new VacationEntity();
 
-                    //Formatting date from String to Date type
-                    Date vacationDateFormatted = new Date();
-                    try{
-                        vacationDateFormatted = new SimpleDateFormat("yyyy-MM-dd").parse(vacationDate);
-                    }catch (ParseException e){
-                        e.printStackTrace();
-                    }
+                    //Formatting date from String to LocalDate type
+                    LocalDate vacationDateFormatted = LocalDate.parse(vacationDate);
 
                     vacationEntity.setVacationDate(vacationDateFormatted);
                     vacationEntity.setVacationPlanned(isVacationPlanned);

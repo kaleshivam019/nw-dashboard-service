@@ -1,10 +1,8 @@
 package com.ey.nwdashboard.entity;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "vacation", schema = "public")
@@ -18,10 +16,8 @@ public class VacationEntity {
     @Column(name = "gpn")
     private String vacationUserGPN;
 
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
     @Column(name = "date")
-    private Date vacationDate;
+    private LocalDate vacationDate;
 
     @Column(name = "planned_leave")
     private boolean isVacationPlanned;
@@ -60,11 +56,11 @@ public class VacationEntity {
         this.vacationUserGPN = vacationUserGPN;
     }
 
-    public Date getVacationDate() {
+    public LocalDate getVacationDate() {
         return vacationDate;
     }
 
-    public void setVacationDate(Date vacationDate) {
+    public void setVacationDate(LocalDate vacationDate) {
         this.vacationDate = vacationDate;
     }
 
