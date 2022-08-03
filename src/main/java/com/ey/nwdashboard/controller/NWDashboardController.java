@@ -64,7 +64,7 @@ public class NWDashboardController {
 
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/fetch-projects", produces = "application/json")
-    public List<ProjectModel> fetchProject(){
+    public ResponseEntity<List<ProjectModel>> fetchProject(){
         return fetchProjectService.fetchProjects();
     }
 }
