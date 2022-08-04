@@ -73,7 +73,7 @@ public class NWDashboardController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "dashboard/v1/generate-report")
+    @PostMapping(value = "dashboard/v1/generate-report")
     public ResponseEntity generateExcelReport(@RequestParam(name = "startDate", required = false) String startDate,
                                               @RequestParam(name = "endDate", required = false) String endDate,
                                               @RequestParam(name = "userGPN", required = false) String userGPN){

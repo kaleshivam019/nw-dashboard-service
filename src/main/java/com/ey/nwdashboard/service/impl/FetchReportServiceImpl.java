@@ -184,7 +184,6 @@ public class FetchReportServiceImpl implements FetchReportService {
             byteArray = Files.readAllBytes(Paths.get(DIR_PATH + FILE_NAME));
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    /*.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + FILE_NAME + "\"")*/
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + FILE_NAME)
                     .body(byteArray);
         } catch (IOException e) {
