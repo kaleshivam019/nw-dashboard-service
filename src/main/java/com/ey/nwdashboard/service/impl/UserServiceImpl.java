@@ -1,17 +1,20 @@
 package com.ey.nwdashboard.service.impl;
 
+import com.ey.nwdashboard.constants.DashboardConstants;
 import com.ey.nwdashboard.entity.TrackerEntity;
 import com.ey.nwdashboard.entity.UserEntity;
 import com.ey.nwdashboard.entity.VacationEntity;
 import com.ey.nwdashboard.model.CurrentDayVacationModel;
 import com.ey.nwdashboard.model.OnLoadResponse;
 import com.ey.nwdashboard.model.UserModel;
+import com.ey.nwdashboard.model.UserModelResponse;
 import com.ey.nwdashboard.service.TrackerDBService;
 import com.ey.nwdashboard.service.UserDBService;
 import com.ey.nwdashboard.service.UserService;
 import com.ey.nwdashboard.service.VacationDBService;
 import com.ey.nwdashboard.utils.DashboardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -96,21 +99,70 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * This method is responsible to add a new user
+     * This method is responsible to add a new user or update existing user
      * @return responseEntity
      */
     @Override
     public ResponseEntity addNewUser(UserModel userModel) {
-        if(null != userModel.getUserGPN() &&
-                !userDBService.isExistingUser(userModel.getUserGPN())){
-            UserEntity userEntity = DashboardUtils.convertModelToEntity(userModel);
-            if (null != userEntity){
-                UserEntity createdUserEntity = userDBService.addNewUser(userEntity);
-                if(null != createdUserEntity) {
-                    return ResponseEntity.ok("User Created");
+        try{
+            if(null != userModel.getUserGPN() &&
+                    !userDBService.isExistingUser(userModel.getUserGPN())){
+                UserEntity newUserEntity = DashboardUtils.convertModelToEntity(userModel, DashboardConstants.ADD_USER);
+                if (null != newUserEntity){
+                    UserEntity createdUserEntity = userDBService.addNewUser(newUserEntity);
+                    if(null != createdUserEntity){
+                        return new ResponseEntity(prepareUserModelResponse(), HttpStatus.CREATED);
+                    }
+                }
+            }else if(null != userModel.getUserGPN() &&
+                    userDBService.isExistingUser(userModel.getUserGPN())){
+                UserEntity updateUserEntity = DashboardUtils.convertModelToEntity(userModel, DashboardConstants.UPDATE_USER);
+
+                UserEntity existingUserEntity = userDBService.getAllUsers().stream().filter(userEntity -> userEntity.getUserGPN().equals(userModel.getUserGPN())).findFirst().orElse(null);
+                if(null != existingUserEntity){
+                    //set createdBy & createdOn from DB
+                    updateUserEntity.setUserCreatedBy(existingUserEntity.getUserCreatedBy());
+                    updateUserEntity.setUserCreatedOn(existingUserEntity.getUserCreatedOn());
+
+                    if (null != updateUserEntity){
+                        UserEntity updatedUserEntity = userDBService.addNewUser(updateUserEntity);
+                        if(null != updatedUserEntity){
+                            return new ResponseEntity(prepareUserModelResponse(), HttpStatus.OK);
+                        }
+                    }
                 }
             }
+        }catch (Exception exception){
+            return new ResponseEntity(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok("User already exists");
+        return null;
     }
+
+    /**
+     * This method will get all users from DB prepare the response for addUser API
+     * @return
+     */
+    private UserModelResponse prepareUserModelResponse() {
+        //Initialize the UserModel Object
+        UserModelResponse userModelResponse = new UserModelResponse();
+
+        //Get all the users from DB
+        List<UserEntity> userEntityList = userDBService.getAllUsers();
+        if(null != userEntityList && !userEntityList.isEmpty()) {
+            List<UserModel> userModelList = new ArrayList<>();
+            userEntityList.stream().forEach(userEntity -> {
+
+                String userGPN = userEntity.getUserGPN();
+
+                //Get tracker data for each entity
+                TrackerEntity trackerEntity = trackerDBService.getTrackerEntry(userGPN);
+
+                //Convert the UserEntity & trackerEntity to UserModel using utility method
+                userModelList.add(DashboardUtils.convertEntityToModel(userEntity, trackerEntity));
+            });
+            userModelResponse.setUserModelList(userModelList);
+        }
+        return userModelResponse;
+    }
+
 }

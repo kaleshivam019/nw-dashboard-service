@@ -1,5 +1,6 @@
 package com.ey.nwdashboard.utils;
 
+import com.ey.nwdashboard.constants.DashboardConstants;
 import com.ey.nwdashboard.entity.TrackerEntity;
 import com.ey.nwdashboard.entity.UserEntity;
 import com.ey.nwdashboard.entity.VacationEntity;
@@ -39,7 +40,7 @@ public class DashboardUtils {
      * @param userModel
      * @return
      */
-    public static UserEntity convertModelToEntity(UserModel userModel) {
+    public static UserEntity convertModelToEntity(UserModel userModel, String operationType) {
         UserEntity userEntity = new UserEntity();
         if(null != userModel){
             userEntity.setUserGPN(userModel.getUserGPN());
@@ -48,10 +49,15 @@ public class DashboardUtils {
             userEntity.setUserProjectName(userModel.getUserProjectName());
             userEntity.setUserActive(userModel.isUserActive());
             userEntity.setUserLocation(userModel.getUserLocation());
-            userEntity.setUserCreatedBy("SYS-ADMIN");
-            userEntity.setUserCreatedOn(new Timestamp(System.currentTimeMillis()));
-            userEntity.setUserUpdatedBy("SYS-ADMIN");
-            userEntity.setUserUpdatedOn(new Timestamp(System.currentTimeMillis()));
+            if(DashboardConstants.ADD_USER.equals(operationType)){
+                userEntity.setUserCreatedBy("SYS-ADMIN");
+                userEntity.setUserCreatedOn(new Timestamp(System.currentTimeMillis()));
+                userEntity.setUserUpdatedBy("SYS-ADMIN");
+                userEntity.setUserUpdatedOn(new Timestamp(System.currentTimeMillis()));
+            }else if(DashboardConstants.UPDATE_USER.equals(operationType)){
+                userEntity.setUserUpdatedBy("SYS-ADMIN");
+                userEntity.setUserUpdatedOn(new Timestamp(System.currentTimeMillis()));
+            }
         }
         return userEntity;
     }
