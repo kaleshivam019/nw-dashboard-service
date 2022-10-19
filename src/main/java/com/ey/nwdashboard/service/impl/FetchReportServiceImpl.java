@@ -192,18 +192,20 @@ public class FetchReportServiceImpl implements FetchReportService {
     }
 
     private void writeFinalData(Workbook workbook, String startDate, String endDate, String userGPN){
-        //Parse string dates to LocalDate object
-        var localDateRef = new Object() {
+       //Parse string dates to LocalDate object
+        /*var localDateRef = new Object() {
             LocalDate localStartDate = null;
             LocalDate localEndDate = null;
-        };
+        };*/
+        LocalDate localStartDate = null;
+        LocalDate localEndDate = null;
         if((null != startDate && !startDate.isBlank()) && (null != endDate && !endDate.isBlank())){
-            localDateRef.localStartDate = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            localDateRef.localEndDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            localStartDate = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            localEndDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }else{
             //Assign start date & end date of the year if date coming as null or empty
-            localDateRef.localStartDate = LocalDate.of(LocalDate.now().getYear(), 01, 01);
-            localDateRef.localEndDate = LocalDate.of(LocalDate.now().getYear(), 12, 31);
+            localStartDate = LocalDate.of(LocalDate.now().getYear(), 01, 01);
+            localEndDate = LocalDate.of(LocalDate.now().getYear(), 12, 31);
         }
 
         //Create sheet
@@ -213,23 +215,23 @@ public class FetchReportServiceImpl implements FetchReportService {
         Sheet sheet = workbook.getSheetAt(0);
 
         //Create Headers for the report
-        workbook = createHeaders(workbook, sheet, localDateRef.localStartDate, localDateRef.localEndDate);
+        workbook = createHeaders(workbook, sheet, localStartDate, localEndDate);
 
         //Save vacations for users based on userGPN, startDate & endDate
         List<UserEntity> users = userDBService.getAllUsers();
         if(null != userGPN && !userGPN.isBlank() &&
-                null != localDateRef.localStartDate &&
-                null != localDateRef.localEndDate){ //For single requested user
+                null != localStartDate &&
+                null != localEndDate){ //For single requested user
             Optional<UserEntity> userEntityOptional = Optional.ofNullable(users.stream().filter(userEntity -> userEntity.getUserGPN().equals(userGPN)).findFirst().orElse(null));
             if(null != userEntityOptional && !userEntityOptional.isEmpty()){
-                createAndInsertRow(2, workbook, sheet, userEntityOptional.get().getUserName(), userGPN, localDateRef.localStartDate, localDateRef.localEndDate);
+                createAndInsertRow(2, workbook, sheet, userEntityOptional.get().getUserName(), userGPN, localStartDate, localEndDate);
             }
         }else if((null == userGPN || userGPN.isBlank()) &&
-                null != localDateRef.localStartDate &&
-                null != localDateRef.localEndDate){ //For multiple users
+                null != localStartDate &&
+                null != localEndDate){ //For multiple users
             int rowNumber = 2;
             for (UserEntity userEntity : users){
-                createAndInsertRow(rowNumber, workbook, sheet, userEntity.getUserName(), userEntity.getUserGPN(), localDateRef.localStartDate, localDateRef.localEndDate);
+                createAndInsertRow(rowNumber, workbook, sheet, userEntity.getUserName(), userEntity.getUserGPN(), localStartDate, localEndDate);
                 rowNumber++;
             }
         }
