@@ -1,8 +1,8 @@
 package com.ey.nwdashboard.controller;
 
 import com.ey.nwdashboard.model.*;
-import com.ey.nwdashboard.service.FetchProjectService;
 import com.ey.nwdashboard.service.FetchReportService;
+import com.ey.nwdashboard.service.ProjectService;
 import com.ey.nwdashboard.service.UserService;
 import com.ey.nwdashboard.service.VacationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class NWDashboardController {
     FetchReportService fetchReportService;
 
     @Autowired
-    FetchProjectService fetchProjectService;
+    ProjectService projectService;
 
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/load", produces = "application/json")
@@ -69,7 +69,13 @@ public class NWDashboardController {
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/fetch-projects", produces = "application/json")
     public ResponseEntity<List<ProjectModel>> fetchProject(){
-        return fetchProjectService.fetchProjects();
+        return projectService.fetchProjects();
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "dashboard/v1/add/project", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<MessageModelResponse> addProject(@RequestBody List<ProjectModel> projectModelList){
+        return projectService.addProject(projectModelList);
     }
 
     @CrossOrigin

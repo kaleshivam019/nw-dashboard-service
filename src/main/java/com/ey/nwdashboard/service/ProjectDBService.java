@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ProjectDBService {
     List<ProjectEntity> getAllProjects();
+    ProjectEntity addProject(ProjectEntity projectEntity);
 }

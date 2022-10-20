@@ -23,4 +23,13 @@ public class ProjectDBServiceImpl implements ProjectDBService {
         }
         return null;
     }
+
+    @Override
+    public ProjectEntity addProject(ProjectEntity projectEntity) {
+        ProjectEntity savedProjectEntity = projectRepository.save(projectEntity);
+        if(null != savedProjectEntity){
+            return savedProjectEntity;
+        }
+        return null;
+    }
 }

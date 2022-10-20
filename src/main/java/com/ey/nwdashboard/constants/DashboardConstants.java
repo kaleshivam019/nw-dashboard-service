@@ -11,4 +11,5 @@ public class DashboardConstants {
     public static final String HEADER_GPN = "GPN";
     public static final String ADD_USER = "ADD_USER";
     public static final String UPDATE_USER = "UPDATE_USER";
+    public static final String SYS_ADMIN = "SYS-ADMIN";
 }
