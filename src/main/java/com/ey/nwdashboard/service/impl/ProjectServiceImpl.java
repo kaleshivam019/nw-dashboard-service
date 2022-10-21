@@ -88,14 +88,14 @@ public class ProjectServiceImpl implements ProjectService {
 
                     try{
                         projectDBService.addProject(projectEntity);
-                        messageModelResponse.setMessage("Project successfully saved in DB!");
-                        return new ResponseEntity<>(messageModelResponse, HttpStatus.OK);
                     } catch (Exception exception){
                         messageModelResponse.setMessage("Error while saving project in DB!");
                         return new ResponseEntity<>(messageModelResponse, HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 }
             }
+            messageModelResponse.setMessage("Project(s) successfully saved in DB!");
+            return new ResponseEntity<>(messageModelResponse, HttpStatus.OK);
         }
         return new ResponseEntity<>(messageModelResponse, HttpStatus.OK);
     }
