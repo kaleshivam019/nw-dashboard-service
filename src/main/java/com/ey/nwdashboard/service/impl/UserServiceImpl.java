@@ -100,42 +100,40 @@ public class UserServiceImpl implements UserService {
 
     /**
      * This method is responsible to add a new user or update existing user
+     * @param userModelList
      * @return responseEntity
      */
     @Override
-    public ResponseEntity addNewUser(UserModel userModel) {
-        try{
-            if(null != userModel.getUserGPN() &&
-                    !userDBService.isExistingUser(userModel.getUserGPN())){
-                UserEntity newUserEntity = DashboardUtils.convertModelToEntity(userModel, DashboardConstants.ADD_USER);
-                if (null != newUserEntity){
-                    UserEntity createdUserEntity = userDBService.addNewUser(newUserEntity);
-                    if(null != createdUserEntity){
-                        return new ResponseEntity(prepareUserModelResponse(), HttpStatus.CREATED);
+    public ResponseEntity addNewUser(List<UserModel> userModelList) {
+        //Iterate list for each user
+        for(UserModel userModel : userModelList){
+            try{
+                if(null != userModel.getUserGPN() &&
+                        !userDBService.isExistingUser(userModel.getUserGPN())){
+                    UserEntity newUserEntity = DashboardUtils.convertModelToEntity(userModel, DashboardConstants.ADD_USER);
+                    if (null != newUserEntity){
+                        userDBService.addNewUser(newUserEntity);
                     }
-                }
-            }else if(null != userModel.getUserGPN() &&
-                    userDBService.isExistingUser(userModel.getUserGPN())){
-                UserEntity updateUserEntity = DashboardUtils.convertModelToEntity(userModel, DashboardConstants.UPDATE_USER);
+                }else if(null != userModel.getUserGPN() &&
+                        userDBService.isExistingUser(userModel.getUserGPN())){
+                    UserEntity updateUserEntity = DashboardUtils.convertModelToEntity(userModel, DashboardConstants.UPDATE_USER);
 
-                UserEntity existingUserEntity = userDBService.getAllUsers().stream().filter(userEntity -> userEntity.getUserGPN().equals(userModel.getUserGPN())).findFirst().orElse(null);
-                if(null != existingUserEntity){
-                    //set createdBy & createdOn from DB
-                    updateUserEntity.setUserCreatedBy(existingUserEntity.getUserCreatedBy());
-                    updateUserEntity.setUserCreatedOn(existingUserEntity.getUserCreatedOn());
+                    UserEntity existingUserEntity = userDBService.getAllUsers().stream().filter(userEntity -> userEntity.getUserGPN().equals(userModel.getUserGPN())).findFirst().orElse(null);
+                    if(null != existingUserEntity){
+                        //set createdBy & createdOn from DB
+                        updateUserEntity.setUserCreatedBy(existingUserEntity.getUserCreatedBy());
+                        updateUserEntity.setUserCreatedOn(existingUserEntity.getUserCreatedOn());
 
-                    if (null != updateUserEntity){
-                        UserEntity updatedUserEntity = userDBService.addNewUser(updateUserEntity);
-                        if(null != updatedUserEntity){
-                            return new ResponseEntity(prepareUserModelResponse(), HttpStatus.OK);
+                        if (null != updateUserEntity){
+                            userDBService.addNewUser(updateUserEntity);
                         }
                     }
                 }
+            }catch (Exception exception){
+                return new ResponseEntity(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }catch (Exception exception){
-            return new ResponseEntity(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return null;
+        return new ResponseEntity(prepareUserModelResponse(), HttpStatus.CREATED);
     }
 
     /**

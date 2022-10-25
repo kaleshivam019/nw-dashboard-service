@@ -38,8 +38,8 @@ public class NWDashboardController {
 
     @CrossOrigin
     @PostMapping(value = "dashboard/v1/add/user", consumes = "application/json", produces = "application/json")
-    public ResponseEntity addNewUser(@RequestBody UserModel userModel){
-        return userService.addNewUser(userModel);
+    public ResponseEntity addNewUser(@RequestBody List<UserModel> userModelList){
+        return userService.addNewUser(userModelList);
     }
 
     @CrossOrigin
