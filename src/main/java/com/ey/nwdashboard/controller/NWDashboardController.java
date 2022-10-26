@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class NWDashboardController {
@@ -104,5 +106,14 @@ public class NWDashboardController {
     @GetMapping(value = "dashboard/v1/download-report", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity downloadExcelReport() {
         return fetchReportService.downloadFile();
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "dashboard/v1/refresh")
+    public MessageModelResponse refreshApplication(){
+        MessageModelResponse messageModelResponse = new MessageModelResponse();
+        messageModelResponse.setMessage("Success");
+        Logger.getLogger("NWDashboardController").log(Level.INFO, "NW Dashboard Application Refreshed using Schedular");
+        return messageModelResponse;
     }
 }
