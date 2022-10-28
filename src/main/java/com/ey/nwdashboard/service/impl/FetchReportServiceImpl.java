@@ -251,10 +251,12 @@ public class FetchReportServiceImpl implements FetchReportService {
     private void createAndInsertRow(int rowNumber, Workbook workbook, Sheet sheet, String userName, String userGPN, LocalDate localStartDate, LocalDate localEndDate) {
         List<VacationEntity> userVacations = vacationDBService.getVacations(userGPN);
         LocalDate finalLocalStartDate = localStartDate;
-        userVacations = userVacations.stream().filter(vacationEntity ->
-                (vacationEntity.getVacationDate().isEqual(finalLocalStartDate)) ||
-                        (vacationEntity.getVacationDate().isEqual(localEndDate)) ||
-                        (vacationEntity.getVacationDate().isAfter(finalLocalStartDate) && vacationEntity.getVacationDate().isBefore(localEndDate))).collect(Collectors.toList());
+        if(null != userVacations){
+            userVacations = userVacations.stream().filter(vacationEntity ->
+                    (vacationEntity.getVacationDate().isEqual(finalLocalStartDate)) ||
+                            (vacationEntity.getVacationDate().isEqual(localEndDate)) ||
+                            (vacationEntity.getVacationDate().isAfter(finalLocalStartDate) && vacationEntity.getVacationDate().isBefore(localEndDate))).collect(Collectors.toList());
+        }
 
         //Fill map with default values
         LinkedHashMap<String, String> userVacationMap = new LinkedHashMap<>();
