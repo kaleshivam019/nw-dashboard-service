@@ -1,16 +1,18 @@
 package com.ey.nwdashboard.controller;
 
+import com.ey.nwdashboard.entity.TrackerEntity;
+import com.ey.nwdashboard.entity.UserEntity;
 import com.ey.nwdashboard.model.*;
-import com.ey.nwdashboard.service.FetchReportService;
-import com.ey.nwdashboard.service.ProjectService;
-import com.ey.nwdashboard.service.UserService;
-import com.ey.nwdashboard.service.VacationService;
+import com.ey.nwdashboard.service.*;
+import com.ey.nwdashboard.service.impl.TrackerDBServiceImpl;
+import com.ey.nwdashboard.service.impl.UserDBServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,6 +33,9 @@ public class NWDashboardController {
 
     @Autowired
     ProjectService projectService;
+
+    @Autowired
+    SchedulerService schedulerService;
 
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/load", produces = "application/json")
@@ -115,5 +120,11 @@ public class NWDashboardController {
         messageModelResponse.setMessage("Success");
         Logger.getLogger("NWDashboardController").log(Level.INFO, "NW Dashboard Application Refreshed using Schedular");
         return messageModelResponse;
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "dashboard/v1/defaulting-entry")
+    public ResponseEntity<MessageModelResponse> defaultingPendingVacationTrackerEntry(){
+        return schedulerService.defaultingPendingVacationTrackerEntry();
     }
 }
