@@ -48,7 +48,8 @@ public class NWDashboardScheduler {
     /**
      * This is the cron scheduler which will run on 1st day of every month at 12:02 AM
      */
-    @Scheduled(cron = "0 2 0 1 1/1 *")
+    /*@Scheduled(cron = "0 2 0 1 1/1 *")*/
+    @Scheduled(cron = "0 30 3 1 1/1 *")
     public void pendingVacationTrackerScheduler(){
         logger.log(Level.INFO, "Setting vacation tracker entry to false - STARTED");
 
