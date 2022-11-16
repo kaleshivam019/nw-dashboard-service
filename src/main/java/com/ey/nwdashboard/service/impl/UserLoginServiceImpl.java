@@ -65,7 +65,8 @@ public class UserLoginServiceImpl implements UserLoginService {
                 ResponseEntity<Object> response = null ;
                 try{
                     //Call the rest end point to get the auth token
-                    response = restTemplate.exchange("http://localhost:8080/oauth/token", HttpMethod.POST, requestEntity, Object.class);
+                    /*response = restTemplate.exchange("http://localhost:8080/oauth/token", HttpMethod.POST, requestEntity, Object.class);*/
+                    response = restTemplate.exchange("https://nw-dashboard-service-app.herokuapp.com/oauth/token", HttpMethod.POST, requestEntity, Object.class);
                 }catch (Exception exception){
                     return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
                 }
