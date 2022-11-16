@@ -1,18 +1,14 @@
 package com.ey.nwdashboard.controller;
 
-import com.ey.nwdashboard.entity.TrackerEntity;
-import com.ey.nwdashboard.entity.UserEntity;
+import com.ey.nwdashboard.entity.UserRegisteredEntity;
 import com.ey.nwdashboard.model.*;
 import com.ey.nwdashboard.service.*;
-import com.ey.nwdashboard.service.impl.TrackerDBServiceImpl;
-import com.ey.nwdashboard.service.impl.UserDBServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,6 +32,12 @@ public class NWDashboardController {
 
     @Autowired
     SchedulerService schedulerService;
+
+    @Autowired
+    UserSignUpService userSignUpService;
+
+    @Autowired
+    UserLoginService userLoginService;
 
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/load", produces = "application/json")
@@ -126,5 +128,23 @@ public class NWDashboardController {
     @PostMapping(value = "dashboard/v1/defaulting-entry")
     public ResponseEntity<MessageModelResponse> defaultingPendingVacationTrackerEntry(){
         return schedulerService.defaultingPendingVacationTrackerEntry();
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "dashboard/v1/user-sign-up")
+    public ResponseEntity<MessageModelResponse> userSignUp(@RequestBody UserRegisteredEntity userRegisteredEntity){
+        return userSignUpService.userSignUp(userRegisteredEntity);
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "dashboard/v1/user-log-out")
+    public ResponseEntity<MessageModelResponse> userLogOut(@RequestHeader(value = "Authorization") String oauthToken){
+        return userSignUpService.userLogOut(oauthToken);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "dashboard/v1/user-log-in")
+    public ResponseEntity<OauthLoginResponse> userLogIn(@RequestBody OAuthLoginRequest oAuthLoginRequest){
+        return userLoginService.userLoginAndGetOauthToken(oAuthLoginRequest);
     }
 }
