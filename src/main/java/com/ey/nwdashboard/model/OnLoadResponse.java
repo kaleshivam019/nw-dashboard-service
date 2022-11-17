@@ -5,6 +5,7 @@ import java.util.List;
 public class OnLoadResponse {
     private List<UserModel> users;
     private List<CurrentDayVacationModel> onVacationToday;
+    private PublicHolidayToday publicHolidayToday;
 
     public List<UserModel> getUsers() {
         return users;
@@ -20,5 +21,13 @@ public class OnLoadResponse {
 
     public void setOnVacationToday(List<CurrentDayVacationModel> onVacationToday) {
         this.onVacationToday = onVacationToday;
+    }
+
+    public PublicHolidayToday getPublicHolidayToday() {
+        return publicHolidayToday;
+    }
+
+    public void setPublicHolidayToday(PublicHolidayToday publicHolidayToday) {
+        this.publicHolidayToday = publicHolidayToday;
     }
 }
