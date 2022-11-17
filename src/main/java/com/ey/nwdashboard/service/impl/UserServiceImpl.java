@@ -1,13 +1,11 @@
 package com.ey.nwdashboard.service.impl;
 
 import com.ey.nwdashboard.constants.DashboardConstants;
+import com.ey.nwdashboard.entity.PublicHolidayEntity;
 import com.ey.nwdashboard.entity.TrackerEntity;
 import com.ey.nwdashboard.entity.UserEntity;
 import com.ey.nwdashboard.entity.VacationEntity;
-import com.ey.nwdashboard.model.CurrentDayVacationModel;
-import com.ey.nwdashboard.model.OnLoadResponse;
-import com.ey.nwdashboard.model.UserModel;
-import com.ey.nwdashboard.model.UserModelResponse;
+import com.ey.nwdashboard.model.*;
 import com.ey.nwdashboard.service.TrackerDBService;
 import com.ey.nwdashboard.service.UserDBService;
 import com.ey.nwdashboard.service.UserService;
@@ -24,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -47,6 +46,18 @@ public class UserServiceImpl implements UserService {
 
         //Get all the users from DB
         List<UserEntity> userEntityList = userDBService.getAllUsers();
+
+        //Get public holidays today for different location
+        List<PublicHolidayEntity> publicHolidayEntityList = vacationDBService.getPublicHolidays(LocalDate.now());
+        if(null != publicHolidayEntityList && !publicHolidayEntityList.isEmpty()){
+            List<String> publicHolidayLocations;
+            publicHolidayLocations = publicHolidayEntityList.stream().map(PublicHolidayEntity::getLocation).collect(Collectors.toList());
+
+            PublicHolidayToday publicHolidayToday = new PublicHolidayToday();
+            publicHolidayToday.setPublicHolidayToday(publicHolidayLocations);
+
+            onLoadResponse.setPublicHolidayToday(publicHolidayToday);
+        }
 
         if(null != userEntityList && !userEntityList.isEmpty()){
             List<UserModel> userModelList = new ArrayList<>();
