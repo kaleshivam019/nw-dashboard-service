@@ -143,7 +143,7 @@ public class NWDashboardController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "dashboard/v1/user-log-in")
+    @PostMapping(value = "dashboard/v1/user-log-in", consumes = "application/json", produces = "application/json")
     public ResponseEntity<OauthLoginResponse> userLogIn(@RequestBody OAuthLoginRequest oAuthLoginRequest){
         return userLoginService.userLoginAndGetOauthToken(oAuthLoginRequest);
     }
