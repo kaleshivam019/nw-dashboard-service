@@ -2,9 +2,11 @@ package com.ey.nwdashboard.service.impl;
 
 import com.ey.nwdashboard.constants.DashboardConstants;
 import com.ey.nwdashboard.entity.ProjectEntity;
+import com.ey.nwdashboard.entity.PublicHolidayEntity;
 import com.ey.nwdashboard.entity.UserEntity;
 import com.ey.nwdashboard.entity.VacationEntity;
 import com.ey.nwdashboard.model.*;
+import com.ey.nwdashboard.repository.PublicHolidayRepository;
 import com.ey.nwdashboard.service.FetchReportService;
 import com.ey.nwdashboard.service.ProjectDBService;
 import com.ey.nwdashboard.service.UserDBService;
@@ -43,6 +45,9 @@ public class FetchReportServiceImpl implements FetchReportService {
 
     @Autowired
     VacationDBService vacationDBService;
+
+    @Autowired
+    PublicHolidayRepository publicHolidayRepository;
 
     @Value("${report.dir.path}")
     private String DIR_PATH;
@@ -135,6 +140,16 @@ public class FetchReportServiceImpl implements FetchReportService {
                 });
                 fetchReportResponse.setProjects(projectModels);
             }
+
+            //Public Holidays for report - start
+
+            PublicHolidays publicHolidays = getPublicHolidaysForReport();
+            if(null != publicHolidays){
+                fetchReportResponse.setPublicHolidays(publicHolidays);
+            }
+
+            //Public Holidays for report - start
+
             if(null != fetchReportResponse){
                 return new ResponseEntity(fetchReportResponse, HttpStatus.OK);
             }
@@ -142,6 +157,76 @@ public class FetchReportServiceImpl implements FetchReportService {
             return new ResponseEntity(exception, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return null;
+    }
+
+    /**
+     * This method will be preparing the public holidays for the email report
+     * @return publicHolidays
+     */
+    private PublicHolidays getPublicHolidaysForReport() {
+        PublicHolidays publicHolidays = new PublicHolidays();
+
+        //Prepare the current month and next month
+        String currentMonth = LocalDate.now().getMonth().name();
+        String nextMonth = LocalDate.now().plusMonths(1L).getMonth().name();
+
+        //Set the current & next month
+        List<String> months = new ArrayList<>();
+        months.add(currentMonth);
+        months.add(nextMonth);
+        publicHolidays.setMonths(months);
+
+        //Creating a set to hold available locations in DB
+        Set<String> locationSet = new HashSet<>();
+
+        //Fetch all the public holidays from DB
+        List<PublicHolidayEntity> publicHolidayEntityList = publicHolidayRepository.findAll();
+
+        //Get the locations from the DB and add it to set
+        if(null != publicHolidayEntityList){
+            publicHolidayEntityList.stream().forEach(publicHolidayEntity -> locationSet.add(publicHolidayEntity.getLocation()));
+        }
+
+        List<Location> locationList = new ArrayList<>();
+        locationSet.stream().forEach(location -> locationList.add(new Location(location)));
+
+        //Iterate through the locationList and get the public holiday based on location and current/next month
+        locationList.stream().forEach(location -> {
+            List<Holiday> holidays = new ArrayList<>();
+
+            Holiday currentMonthHoliday = new Holiday();
+            currentMonthHoliday.setMonth(currentMonth);
+            List<String> currentMonthHolidayDates = new ArrayList<>();
+
+            Holiday nextMonthHoliday = new Holiday();
+            nextMonthHoliday.setMonth(nextMonth);
+            List<String> nextMonthHolidayDates = new ArrayList<>();
+
+            if(null != publicHolidays){
+                publicHolidayEntityList.stream().filter(publicHolidayEntity -> location.getLocation().equalsIgnoreCase(publicHolidayEntity.getLocation())).forEach(publicHolidayEntity -> {
+                    LocalDate date = publicHolidayEntity.getPublicHolidayDate();
+                    if(currentMonth.equals(date.getMonth().name())){
+                        currentMonthHolidayDates.add(date.toString());
+                    }else if(nextMonth.equals(date.getMonth().name())){
+                        nextMonthHolidayDates.add(date.toString());
+                    }
+                });
+            }
+
+            //Sort the leaves in natural sorting order
+            currentMonthHolidayDates.sort(Comparator.naturalOrder());
+            nextMonthHolidayDates.sort(Comparator.naturalOrder());
+
+            currentMonthHoliday.setDates(currentMonthHolidayDates);
+            nextMonthHoliday.setDates(nextMonthHolidayDates);
+            holidays.add(currentMonthHoliday);
+            holidays.add(nextMonthHoliday);
+            location.setHolidays(holidays);
+        });
+
+        publicHolidays.setLocations(locationList);
+
+        return publicHolidays;
     }
 
     /**
