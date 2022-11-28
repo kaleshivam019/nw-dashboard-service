@@ -159,7 +159,7 @@ public class NWDashboardController {
 
     @CrossOrigin
     @PostMapping(value = "dashboard/v1/insert-db-data", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<MessageModelResponse> insertDBData(DBDataRequestResponse dbDataRequestResponse){
+    public ResponseEntity<MessageModelResponse> insertDBData(@RequestBody DBDataRequestResponse dbDataRequestResponse){
         return dbDataService.insertDBData(dbDataRequestResponse);
     }
 }
