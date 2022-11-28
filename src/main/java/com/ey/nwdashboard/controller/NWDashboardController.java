@@ -39,6 +39,9 @@ public class NWDashboardController {
     @Autowired
     UserLoginService userLoginService;
 
+    @Autowired
+    DBDataService dbDataService;
+
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/load", produces = "application/json")
     public OnLoadResponse getOnLoadData(){
@@ -146,5 +149,17 @@ public class NWDashboardController {
     @PostMapping(value = "dashboard/v1/user-log-in", consumes = "application/json", produces = "application/json")
     public ResponseEntity<OauthLoginResponse> userLogIn(@RequestBody OAuthLoginRequest oAuthLoginRequest){
         return userLoginService.userLoginAndGetOauthToken(oAuthLoginRequest);
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "dashboard/v1/retrieve-db-data", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DBDataRequestResponse> retrieveDBData(){
+        return dbDataService.retrieveDBData();
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "dashboard/v1/insert-db-data", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<MessageModelResponse> insertDBData(DBDataRequestResponse dbDataRequestResponse){
+        return dbDataService.insertDBData(dbDataRequestResponse);
     }
 }

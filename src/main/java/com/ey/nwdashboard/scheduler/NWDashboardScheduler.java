@@ -28,14 +28,14 @@ public class NWDashboardScheduler {
     /**
      * This scheduler is used to refresh the application every 30 mins to overcome the problem from idle/shutdown state in heroku
      */
-    @Scheduled(cron = "0 0/30 * * * ?")
+    /*@Scheduled(cron = "0 0/30 * * * ?")
     public void refreshAppScheduler(){
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity <String> entity = new HttpEntity<>(headers);
 
         restTemplate.exchange("https://nw-dashboard-service-app.herokuapp.com/dashboard/v1/refresh", HttpMethod.GET, entity, String.class).getBody();
-    }
+    }*/
 
     /**
      * This is the cron scheduler which will run on 1st day of every month at 12:02 AM
