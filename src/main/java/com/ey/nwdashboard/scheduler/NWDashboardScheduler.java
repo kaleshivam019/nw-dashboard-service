@@ -28,7 +28,7 @@ public class NWDashboardScheduler {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity <String> entity = new HttpEntity<>(headers);
 
-        restTemplate.exchange("https://localhost:8080/dashboard/v1/refresh", HttpMethod.GET, entity, String.class).getBody();
+        restTemplate.exchange("http://20.57.169.180:8080/dashboard/v1/refresh", HttpMethod.GET, entity, String.class).getBody();
     }
 
     /**
