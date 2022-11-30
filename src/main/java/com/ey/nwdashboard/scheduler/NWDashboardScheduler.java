@@ -48,7 +48,7 @@ public class NWDashboardScheduler {
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity <String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<MessageModelResponse> response = restTemplate.exchange("https://nw-dashboard-service-app.herokuapp.com/dashboard/v1/defaulting-entry", HttpMethod.POST, entity, MessageModelResponse.class);
+        ResponseEntity<MessageModelResponse> response = restTemplate.exchange("http://20.57.169.180:8080/dashboard/v1/defaulting-entry", HttpMethod.POST, entity, MessageModelResponse.class);
 
         if(response.getStatusCode().is2xxSuccessful()){
             logger.log(Level.INFO, "Setting vacation tracker entry to false - COMPLETED");

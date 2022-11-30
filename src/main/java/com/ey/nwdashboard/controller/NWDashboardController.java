@@ -152,7 +152,7 @@ public class NWDashboardController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "dashboard/v1/retrieve-db-data", consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "dashboard/v1/retrieve-db-data", produces = "application/json")
     public ResponseEntity<DBDataRequestResponse> retrieveDBData(){
         return dbDataService.retrieveDBData();
     }
