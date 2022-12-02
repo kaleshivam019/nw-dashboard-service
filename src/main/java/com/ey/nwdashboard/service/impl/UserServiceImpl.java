@@ -152,6 +152,50 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Method to remove the user and its data from the DB
+     * @param userModelList
+     * @return
+     */
+    @Override
+    public ResponseEntity<MessageModelResponse> removeUser(List<UserModel> userModelList) {
+        MessageModelResponse messageModelResponse = new MessageModelResponse();
+        if(null != userModelList){
+            try{
+                userModelList.stream().forEachOrdered(userModel -> {
+                    //check if user present in DB. if yes, then delete it
+                    if(null != userModel.getUserGPN() && userDBService.isExistingUser(userModel.getUserGPN())){
+                        UserEntity existingUser = userDBService.getUserByGPN(userModel.getUserGPN());
+                        if(null != existingUser){
+                            //Delete user
+                            userDBService.deleteExistingUser(existingUser);
+
+                            //Delete vacation entries for user
+                            List<VacationEntity> userVacations = vacationDBService.getVacations(existingUser.getUserGPN());
+                            if(null != userVacations && !userVacations.isEmpty()){
+                                vacationDBService.deleteVacations(userVacations);
+                            }
+
+                            //Delete tracker entry for user
+                            TrackerEntity userTrackerEntry = trackerDBService.getTrackerEntry(existingUser.getUserGPN());
+                            if(null != userTrackerEntry){
+                                trackerDBService.deleteTrackerEntry(userTrackerEntry);
+                            }
+                        }
+                    }
+                });
+            }catch (Exception exception){
+                messageModelResponse.setMessage("Failed to delete user, Error: " + exception.getMessage());
+                return new ResponseEntity<>(messageModelResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            messageModelResponse.setMessage("Success");
+            return new ResponseEntity<>(messageModelResponse, HttpStatus.OK);
+        }
+
+        messageModelResponse.setMessage("User not found");
+        return new ResponseEntity<>(messageModelResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
      * This method will get all users from DB prepare the response for addUser API
      * @return
      */

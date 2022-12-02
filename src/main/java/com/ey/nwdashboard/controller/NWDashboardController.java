@@ -72,6 +72,12 @@ public class NWDashboardController {
     }
 
     @CrossOrigin
+    @PostMapping(value = "dashboard/v1/remove/user", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<MessageModelResponse> removeUser(@RequestBody List<UserModel> userModelList){
+        return userService.removeUser(userModelList);
+    }
+
+    @CrossOrigin
     @GetMapping(value = "dashboard/v1/{user-gpn}/vacations", produces = "application/json")
     public VacationResponse getUserVacations(@PathVariable("user-gpn") String userGPN){
         return vacationService.getUserVacations(userGPN);
@@ -180,7 +186,7 @@ public class NWDashboardController {
         return dbDataService.insertDBData(dbDataRequestResponse);
     }
 
-    @CrossOrigin
+   /* @CrossOrigin
     @PostMapping(value = "dashboard/v1/migrate-gpn", produces = "application/json")
     public ResponseEntity migrateGPNToUniqueIdentifier(){
         //Fetch all the users
@@ -221,5 +227,5 @@ public class NWDashboardController {
         }
 
         return new ResponseEntity(HttpStatus.OK);
-    }
+    }*/
 }

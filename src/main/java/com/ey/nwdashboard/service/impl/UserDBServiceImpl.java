@@ -49,4 +49,20 @@ public class UserDBServiceImpl implements UserDBService {
     public UserEntity addNewUser(UserEntity userEntity) {
         return userRepository.save(userEntity);
     }
+
+    @Override
+    public void deleteExistingUser(UserEntity userEntity) {
+        if(null != userEntity && null != userEntity.getUserGPN()){
+            userRepository.delete(userEntity);
+        }
+    }
+
+    @Override
+    public UserEntity getUserByGPN(String userGPN) {
+        UserEntity existingUser = userRepository.findByuserGPN(userGPN);
+        if(null != existingUser){
+            return existingUser;
+        }
+        return null;
+    }
 }

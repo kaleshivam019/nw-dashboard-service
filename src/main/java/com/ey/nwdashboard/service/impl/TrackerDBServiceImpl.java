@@ -34,4 +34,11 @@ public class TrackerDBServiceImpl implements TrackerDBService {
         }
         return null;
     }
+
+    @Override
+    public void deleteTrackerEntry(TrackerEntity trackerEntity) {
+        if(null != trackerEntity){
+            trackerRepository.delete(trackerEntity);
+        }
+    }
 }
