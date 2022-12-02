@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -121,6 +122,9 @@ public class UserServiceImpl implements UserService {
             try{
                 if(null != userModel.getUserGPN() &&
                         !userDBService.isExistingUser(userModel.getUserGPN())){
+                    //Assigning a random identifier for each new user
+                    userModel.setUserGPN(UUID.randomUUID().toString());
+
                     UserEntity newUserEntity = DashboardUtils.convertModelToEntity(userModel, DashboardConstants.ADD_USER);
                     if (null != newUserEntity){
                         userDBService.addNewUser(newUserEntity);

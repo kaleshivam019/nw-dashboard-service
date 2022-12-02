@@ -1,8 +1,15 @@
 package com.ey.nwdashboard.controller;
 
+import com.ey.nwdashboard.entity.TrackerEntity;
+import com.ey.nwdashboard.entity.UserEntity;
 import com.ey.nwdashboard.entity.UserRegisteredEntity;
+import com.ey.nwdashboard.entity.VacationEntity;
 import com.ey.nwdashboard.model.*;
+import com.ey.nwdashboard.repository.TrackerRepository;
+import com.ey.nwdashboard.repository.UserRepository;
+import com.ey.nwdashboard.repository.VacationRepository;
 import com.ey.nwdashboard.service.*;
+import org.hibernate.internal.util.Cloneable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +49,15 @@ public class NWDashboardController {
 
     @Autowired
     DBDataService dbDataService;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    VacationRepository vacationRepository;
+
+    @Autowired
+    TrackerRepository trackerRepository;
 
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/load", produces = "application/json")
@@ -161,5 +178,48 @@ public class NWDashboardController {
     @PostMapping(value = "dashboard/v1/insert-db-data", consumes = "application/json", produces = "application/json")
     public ResponseEntity<MessageModelResponse> insertDBData(@RequestBody DBDataRequestResponse dbDataRequestResponse){
         return dbDataService.insertDBData(dbDataRequestResponse);
+    }
+
+    @CrossOrigin
+    @PostMapping(value = "dashboard/v1/migrate-gpn", produces = "application/json")
+    public ResponseEntity migrateGPNToUniqueIdentifier(){
+        //Fetch all the users
+
+        List<UserEntity> userEntityList = userRepository.findAll();
+
+        if(null != userEntityList){
+            for(UserEntity userEntity : userEntityList){
+                UserEntity userEntityNew = userEntity;
+                String uniqueId = UUID.randomUUID().toString();
+
+                List<VacationEntity> vacationEntityList = vacationRepository.findAllByvacationUserGPN(userEntity.getUserGPN());
+                TrackerEntity trackerEntity = trackerRepository.findBytrackerUserGPN(userEntity.getUserGPN());
+
+                //Update all the tracker entry to unique Id
+                if(null != trackerEntity){
+                    trackerEntity.setTrackerUserGPN(uniqueId);
+                    trackerRepository.save(trackerEntity);
+                }
+
+                //Update all the vacation entry to unique Id
+                if(null != vacationEntityList){
+                    for(VacationEntity vacationEntity : vacationEntityList){
+                        if(null != vacationEntity){
+                            vacationEntity.setVacationUserGPN(uniqueId);
+                            vacationRepository.save(vacationEntity);
+                        }
+                    }
+                }
+
+                //Delete the existing row from the table
+                userRepository.delete(userEntity);
+
+                //Update all the user entry to unique Id and save it
+                userEntityNew.setUserGPN(uniqueId);
+                userRepository.save(userEntity);
+            }
+        }
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
