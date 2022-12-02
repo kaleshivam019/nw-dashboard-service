@@ -377,12 +377,12 @@ public class FetchReportServiceImpl implements FetchReportService {
 
 
         //Second cell
-        Cell secondCell = row.createCell(1);
+        /*Cell secondCell = row.createCell(1);
         secondCell.setCellStyle(normalCellStyle);
         secondCell.setCellValue(userGPN);
-        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(1);*/ //Commenting to hide gpn column
 
-        int vacationCellNumber = 2;
+        int vacationCellNumber = 1;
         for (Map.Entry<String, String> vacation : userVacationMap.entrySet()){
             String type = vacation.getValue();
             if(type.equals(DashboardConstants.FLAG_Y)){
@@ -423,9 +423,9 @@ public class FetchReportServiceImpl implements FetchReportService {
 
         //Create UserName & UserGPN header
         secondRow.createCell(0);
-        secondRow.createCell(1);
+        /*secondRow.createCell(1);*/ //Commenting to hide gpn column
         Cell nameCell = secondRow.getCell(0);
-        Cell gpnCell = secondRow.getCell(1);
+        /*Cell gpnCell = secondRow.getCell(1);*/ //Commenting to hide gpn column
         CellStyle nameAndGPNCellStyle = getCellStyle(sheet, IndexedColors.BLACK.getIndex());
 
         Font nameAndGPNFont = workbook.createFont();
@@ -434,15 +434,15 @@ public class FetchReportServiceImpl implements FetchReportService {
 
         nameCell.setCellValue(DashboardConstants.HEADER_NAME);
         nameCell.setCellStyle(nameAndGPNCellStyle);
-        gpnCell.setCellValue(DashboardConstants.HEADER_GPN);
-        gpnCell.setCellStyle(nameAndGPNCellStyle);
+       /* gpnCell.setCellValue(DashboardConstants.HEADER_GPN);
+        gpnCell.setCellStyle(nameAndGPNCellStyle);*/ //Commenting to hide gpn column
 
 
         //Set styles for dates & day header
         CellStyle dayDateHeaderStyle = getCellStyle(sheet, IndexedColors.YELLOW.getIndex());
 
         //create dates & day header
-        int firstSecondRowCellNumber = 2;
+        int firstSecondRowCellNumber = 1;
         while(!localStartDate.isAfter(localEndDate)){
             //convert it into string to save in excel sheet
             String date = localStartDate.toString();

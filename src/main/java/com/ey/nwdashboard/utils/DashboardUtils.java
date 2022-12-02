@@ -9,6 +9,7 @@ import com.ey.nwdashboard.model.VacationModel;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DashboardUtils {
@@ -45,7 +46,11 @@ public class DashboardUtils {
         if(null != userModel){
             userEntity.setUserGPN(userModel.getUserGPN());
             userEntity.setUserName(userModel.getUserName());
-            userEntity.setUserEmail(userModel.getUserEmail());
+
+            //convert username to email address
+            String updatedEmailAddress = userEntity.getUserName().toLowerCase().replace(" ", ".") + "@example.com";
+
+            userEntity.setUserEmail(updatedEmailAddress);
             userEntity.setUserProjectName(userModel.getUserProjectName());
             userEntity.setUserActive(userModel.isUserActive());
             userEntity.setUserLocation(userModel.getUserLocation());
