@@ -36,6 +36,8 @@ public class NWDashboardController {
     FetchReportService fetchReportService;
 
     @Autowired
+    DownloadUserManualService downloadUserManualService;
+    @Autowired
     ProjectService projectService;
 
     @Autowired
@@ -101,6 +103,7 @@ public class NWDashboardController {
         return fetchReportService.fetchReport();
     }
 
+
     @CrossOrigin
     @GetMapping(value = "dashboard/v1/fetch-projects", produces = "application/json")
     public ResponseEntity<List<ProjectModel>> fetchProject(){
@@ -139,6 +142,12 @@ public class NWDashboardController {
     @GetMapping(value = "dashboard/v1/download-report", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity downloadExcelReport() {
         return fetchReportService.downloadFile();
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "dashboard/v1/download-user-manual", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity downloadUserManual() {
+        return downloadUserManualService.downloadFile();
     }
 
     @CrossOrigin
